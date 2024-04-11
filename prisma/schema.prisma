@@ -1,0 +1,204 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+// Define el generador para el cliente Prisma en JavaScript
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Define la fuente de datos como una base de datos PostgreSQL,
+// con la URL obtenida de una variable de entorno DATABASE_URL
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Modelo para representar a un usuario en la base de datos
+model User {
+  // ID único del usuario
+  id Int @id @default(autoincrement())
+
+  // ID único del empleado
+  clerkId      String  @unique
+  // Nombre del usuario
+  name         String?
+  // Correo electrónico del usuario
+  email        String  @unique
+  // URL de la imagen de perfil del usuario
+  profileImage String?
+  // Nivel de suscripción del usuario (por defecto: Free)
+  tier         String? @default("Free")
+  // Créditos del usuario (por defecto: 10)
+  credits      String? @default("10")
+
+  // Fecha de creación del usuario
+  createdAt        DateTime @default(now())
+  // Fecha de última actualización del usuario
+  updatedAt        DateTime @updatedAt
+  // ID único de Google local del usuario
+  localGoogleId    String?  @unique
+  // ID único del recurso de Google del usuario
+  googleResourceId String?  @unique
+
+  // Relación con las credenciales de Google locales del usuario
+  LocalGoogleCredential LocalGoogleCredential?
+  // Relación con los webhooks de Discord del usuario
+  DiscordWebhook        DiscordWebhook[]
+  // Relación con los datos de Notion del usuario
+  Notion                Notion[]
+  // Relación con la integración de Slack del usuario
+  Slack                 Slack[]
+  // Relación con las conexiones del usuario
+  connections           Connections[]
+  // Relación con los flujos de trabajo del usuario
+  workflows             Workflows[]
+}
+
+// Modelo para representar las credenciales de Google locales de un usuario
+model LocalGoogleCredential {
+  // ID único de las credenciales
+  id          String @id @default(uuid())
+  // Token de acceso único
+  accessToken String @unique
+
+  // ID de la carpeta asociada
+  folderId   String?
+  // Token de página asociado
+  pageToken  String?
+  // ID único del canal
+  channelId  String  @unique @default(uuid())
+  // Estado de suscripción
+  subscribed Boolean @default(false)
+
+  // Fecha de creación de las credenciales
+  createdAt DateTime @default(now())
+  // Fecha de última actualización de las credenciales
+  updatedAt DateTime @updatedAt
+
+  // ID del usuario asociado
+  userId Int  @unique
+  // Usuario asociado
+  user   User @relation(fields: [userId], references: [id])
+}
+
+// Modelo para representar un webhook de Discord
+model DiscordWebhook {
+  // ID único del webhook
+  id          String        @id @default(uuid())
+  // ID único del webhook
+  webhookId   String        @unique
+  // URL única del webhook
+  url         String        @unique
+  // Nombre del webhook
+  name        String
+  // Nombre del gremio asociado
+  guildName   String
+  // ID del gremio asociado
+  guildId     String
+  // ID único del canal asociado
+  channelId   String        @unique
+  // Usuario asociado
+  user        User          @relation(fields: [userId], references: [clerkId])
+  // ID del usuario asociado
+  userId      String
+  // Conexiones asociadas
+  connections Connections[]
+}
+
+// Modelo para representar la integración de Slack de un usuario
+model Slack {
+  // ID único de la integración de Slack
+  id String @id @default(uuid())
+
+  // ID de la aplicación asociada
+  appId            String
+  // ID del usuario autenticado
+  authedUserId     String
+  // Token de acceso único
+  authedUserToken  String @unique
+  // Token de acceso de Slack único
+  slackAccessToken String @unique
+  // ID del bot asociado
+  botUserId        String
+  // ID del equipo asociado
+  teamId           String
+  // Nombre del equipo asociado
+  teamName         String
+
+  // Usuario asociado
+  User        User          @relation(fields: [userId], references: [clerkId])
+  // ID del usuario asociado
+  userId      String
+  // Conexiones asociadas
+  connections Connections[]
+}
+
+// Modelo para representar los datos de Notion de un usuario
+model Notion {
+  // ID único de los datos de Notion
+  id            String        @id @default(uuid())
+  // Token de acceso único
+  accessToken   String        @unique
+  // ID único del espacio de trabajo
+  workspaceId   String        @unique
+  // ID único de la base de datos
+  databaseId    String        @unique
+  // Nombre del espacio de trabajo
+  workspaceName String
+  // Icono del espacio de trabajo
+  workspaceIcon String
+  // Usuario asociado
+  User          User          @relation(fields: [userId], references: [clerkId])
+  // ID del usuario asociado
+  userId        String
+  // Conexiones asociadas
+  connections   Connections[]
+}
+
+// Modelo para representar conexiones entre entidades
+model Connections {
+  // ID único de la conexión
+  id               String          @id @default(uuid())
+  // Tipo de conexión único
+  type             String          @unique
+  // Webhook de Discord asociado
+  DiscordWebhook   DiscordWebhook? @relation(fields: [discordWebhookId], references: [id])
+  // ID del webhook de Discord asociado
+  discordWebhookId String?
+  // Datos de Notion asociados
+  Notion           Notion?         @relation(fields: [notionId], references: [id])
+  // ID de los datos de Notion asociados
+  notionId         String?
+  // Usuario asociado
+  User             User?           @relation(fields: [userId], references: [clerkId])
+  // ID del usuario asociado
+  userId           String?
+  // Integración de Slack asociada
+  Slack            Slack?          @relation(fields: [slackId], references: [id])
+  // ID de la integración de Slack asociada
+  slackId          String?
+}
+
+// Modelo para representar flujos de trabajo
+model Workflows {
+  id                String   @id @default(uuid())
+  nodes             String?
+  edges             String?
+  name              String
+  discordTemplate   String?
+  notionTemplate    String?
+  slackTemplate     String?
+  slackChannels     String[]
+  slackAccessToken  String?
+  notionAccessToken String?
+  notionDbId        String?
+  flowPath          String?
+  cronPath          String?
+  publish           Boolean? @default(false)
+  description       String
+  User              User     @relation(fields: [userId], references: [clerkId])
+  userId            String
+}
