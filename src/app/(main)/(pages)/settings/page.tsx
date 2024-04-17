@@ -1,9 +1,57 @@
 import { ProfileForm } from "@/components/forms/ProfileForm";
 import { ProfilePicture } from "./_components/ProfilePicture";
+import { db } from "@/lib/db";
+import { currentUser } from "@clerk/nextjs";
 
 type Props = {};
 
-const SettingsPage = (props: Props) => {
+const SettingsPage = async (props: Props) => {
+  const authUser = await currentUser();
+  if (!authUser) return null;
+
+  const user = await db.user.findUnique({ where: { clerkId: authUser.id } });
+  const removeProfileImage = async () => {
+    "use server";
+    const response = await db.user.update({
+      where: {
+        clerkId: authUser.id,
+      },
+      data: {
+        profileImage: "",
+      },
+    });
+    return response;
+  };
+
+  const uploadProfileImage = async (image: string) => {
+    "use server";
+    const id = authUser.id;
+    const response = await db.user.update({
+      where: {
+        clerkId: id,
+      },
+      data: {
+        profileImage: image,
+      },
+    });
+
+    return response;
+  };
+
+  const updateUserInfo = async (name: string) => {
+    'use server'
+
+    const updateUser = await db.user.update({
+      where: {
+        clerkId: authUser.id,
+      },
+      data: {
+        name,
+      },
+    })
+    return updateUser
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <h1 className="sticky top-0 z-[10] flex items-center justify-between border-b bg-background/50 p-6 text-4xl backdrop-blur-lg">
@@ -17,12 +65,14 @@ const SettingsPage = (props: Props) => {
           </p>
         </div>
         <ProfilePicture
-          // onDelete={removeProfileImage}
-          // userImage={user?.profileImage || ""}
-          // onUpload={uploadProfileImage}
+          onDelete={removeProfileImage}
+          userImage={user?.profileImage || ""}
+          onUpload={uploadProfileImage}
         />
-        {/* <ProfileForm user={user} onUpdate={updateUserInfo} /> */}
-        <ProfileForm />
+        <ProfileForm 
+          user={user} 
+          onUpdate={updateUserInfo} 
+        />
       </div>
     </div>
   );
