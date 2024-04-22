@@ -6,7 +6,7 @@ export const EditUserProfileSchema = z.object({
   name: z.string().min(1, 'Required'),
 })
 
-export const WorkFlowFormSchema = z.object({
+export const WorkflowFormSchema = z.object({
   name: z.string().min(1, 'Required'),
   description: z.string().min(1, 'Required'),
 })
@@ -83,3 +83,10 @@ export type EditorActions =
       element: EditorNode
     }
   }
+
+export const nodeMapper: Record<string, string> = {
+  Notion: 'notionNode',
+  Slack: 'slackNode',
+  Discord: 'discordNode',
+  'Google Drive': 'googleNode',
+}
