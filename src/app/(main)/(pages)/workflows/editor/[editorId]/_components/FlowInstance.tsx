@@ -3,9 +3,12 @@
 import { Button } from "@/components/ui/button";
 import { useNodeConnections } from "@/providers/connections-provider";
 import { usePathname } from "next/navigation";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
-import { onCreateNodesEdges, onFlowPublish } from "../_actions/workflow-connections";
+import {
+  onCreateNodesEdges,
+  onFlowPublish,
+} from "../_actions/workflow-connections";
 
 type Props = {
   children: React.ReactNode;
@@ -33,6 +36,22 @@ export const FlowInstance = ({ children, edges, nodes }: Props) => {
     const response = await onFlowPublish(pathName.split("/").pop()!, true);
     if (response) toast.message(response);
   }, []);
+
+  const onAutomateFlow = async () => {
+    const flows: any = [];
+    const connectedEdges = edges.map((edge) => edge.target);
+    connectedEdges.map((target) => {
+      nodes.forEach((node) => {
+        if (node.id === target) {
+          flows.push(node.type);
+        }
+      });
+    });
+  };
+
+  useEffect(() => {
+    onAutomateFlow()
+  }, [edges])
 
   return (
     <div className="flex flex-col gap-2">

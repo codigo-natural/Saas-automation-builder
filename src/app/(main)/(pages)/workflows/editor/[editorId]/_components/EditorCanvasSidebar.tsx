@@ -9,8 +9,11 @@ import { useNodeConnections } from "@/providers/connections-provider";
 import { useEditor } from "@/providers/editor-provider";
 import { EditorCanvasIconHelper } from "./EditorCanvasCardIconHelper";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import { onDragStart } from "@/lib/editor-utils";
+import { onConnections, onDragStart } from "@/lib/editor-utils";
 import { RenderConnectionAccordion } from "./RenderConnectionAccordion";
+import { RenderOutputAccordion } from "./RenderOutputAccordion";
+import { useFuzzieStore } from "@/store";
+import { useEffect } from "react";
 
 type Props = {
   nodes: EditorNodeType[];
@@ -19,6 +22,14 @@ type Props = {
 export const EditorCanvasSidebar = ({ nodes }: Props) => {
   const { state } = useEditor();
   const { nodeConnection } = useNodeConnections();
+  const { googleFile, setSlackChannels } = useFuzzieStore()
+
+  useEffect(() => {
+    if (state) {
+      onConnections(nodeConnection, state, googleFile)
+    }
+  }, [state])
+
   return (
     <aside>
       <Tabs defaultValue="actions" className="h-screen overflow-scroll pb-24">
@@ -77,10 +88,10 @@ export const EditorCanvasSidebar = ({ nodes }: Props) => {
               <AccordionTrigger className="!no-underline">
                 Action
               </AccordionTrigger>
-              {/* <RenderOutputAccordion
+              <RenderOutputAccordion
                 state={state}
                 nodeConnection={nodeConnection}
-              /> */}
+              />
             </AccordionItem>
           </Accordion>
         </TabsContent>
