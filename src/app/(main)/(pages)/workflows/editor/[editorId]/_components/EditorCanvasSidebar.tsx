@@ -10,6 +10,7 @@ import { useEditor } from "@/providers/editor-provider";
 import { EditorCanvasIconHelper } from "./EditorCanvasCardIconHelper";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { onDragStart } from "@/lib/editor-utils";
+import { RenderConnectionAccordion } from "./RenderConnectionAccordion";
 
 type Props = {
   nodes: EditorNodeType[];
@@ -63,13 +64,13 @@ export const EditorCanvasSidebar = ({ nodes }: Props) => {
                 Account
               </AccordionTrigger>
               <AccordionContent>
-                {/* {CONNECTIONS.map((connection) => (
+                {CONNECTIONS.map((connection) => (
                   <RenderConnectionAccordion
                     key={connection.title}
                     state={state}
                     connection={connection}
                   />
-                ))} */}
+                ))}
               </AccordionContent>
             </AccordionItem>
             <AccordionItem value="Expected Output" className="px-2">
