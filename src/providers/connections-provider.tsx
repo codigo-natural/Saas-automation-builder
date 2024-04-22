@@ -116,6 +116,7 @@ export const ConnectionsProvider = ({ children }: ConnectionWithChildProps) => {
   }
 
   return <Provider value={values}>{children}</Provider>
+
 }
 
 export const useNodeConnections = () => {
