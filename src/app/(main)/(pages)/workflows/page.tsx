@@ -11,11 +11,6 @@ function PageWorkflows({}: Props) {
         <WorkflowsButton />
       </h1>
       <Workflows />
-      <Workflows />
-      <Workflows />
-      <Workflows />
-      <Workflows />
-      <Workflows />
     </div>
   );
 }

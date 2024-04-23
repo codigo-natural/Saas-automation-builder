@@ -1,4 +1,4 @@
-import { WorkFlowFormSchema } from "@/lib/types";
+import { WorkflowFormSchema } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -21,6 +21,9 @@ import {
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import { Loader2 } from "lucide-react";
+import { onCreateWorkflow } from "@/app/(main)/(pages)/workflows/_actions/workflow-connections";
+import { toast } from "sonner";
+import { useModal } from "@/providers/modal-provider";
 
 type Props = {
   title?: string;
@@ -28,9 +31,10 @@ type Props = {
 };
 
 export const Workflowform = ({ subTitle, title }: Props) => {
-  const form = useForm<z.infer<typeof WorkFlowFormSchema>>({
+  const { setClose } = useModal();
+  const form = useForm<z.infer<typeof WorkflowFormSchema>>({
     mode: "onChange",
-    resolver: zodResolver(WorkFlowFormSchema),
+    resolver: zodResolver(WorkflowFormSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -40,7 +44,14 @@ export const Workflowform = ({ subTitle, title }: Props) => {
   const isLoading = form.formState.isLoading;
   const router = useRouter();
 
-  const handleSubmit = () => {};
+  const handleSubmit = async (values: z.infer<typeof WorkflowFormSchema>) => {
+    const workflow = await onCreateWorkflow(values.name, values.description);
+    if (workflow) {
+      toast.message(workflow.message);
+      router.refresh();
+    }
+    setClose();
+  };
 
   return (
     <Card className="w-full max-w-[450px] border-none">
