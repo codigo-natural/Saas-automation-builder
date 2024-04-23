@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import Image from "next/image";
 import Link from "next/link";
+import React from "react";
 import { toast } from "sonner";
 import { onFlowPublish } from "../editor/[editorId]/_actions/workflow-connections";
 
@@ -65,7 +66,7 @@ export const Workflow = ({ description, id, name, publish }: Props) => {
         </Label>
         <Switch
           id="airplane-mode"
-          onClick={onPublishFlow}
+          // onClick={onPublishFlow}
           defaultChecked={publish!}
         />
       </div>
