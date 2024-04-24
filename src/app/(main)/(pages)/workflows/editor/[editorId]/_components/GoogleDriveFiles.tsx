@@ -13,7 +13,7 @@ type Props = {};
 export const GoogleDriveFiles = (props: Props) => {
   const [loading, setLoading] = useState(false);
   const [isListening, setIsListening] = useState(false);
-
+  
   const reqGoogle = async () => {
     setLoading(true);
     const response = await axios.get("/api/drive-activity");
@@ -22,6 +22,7 @@ export const GoogleDriveFiles = (props: Props) => {
       setLoading(false);
       setIsListening(true);
     }
+    console.log(response)
     setIsListening(false);
   };
 

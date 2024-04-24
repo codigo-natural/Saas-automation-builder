@@ -1,6 +1,6 @@
 'use server'
 
-import { Option } from '@/components/ui/multiple-selector'
+import { Option } from '@/components/ui/MultipleSelector'
 import { db } from '@/lib/db'
 import { currentUser } from '@clerk/nextjs'
 import axios from 'axios'

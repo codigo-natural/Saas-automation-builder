@@ -1,49 +1,49 @@
-'use client'
+"use client";
 
-import { useBilling } from '@/providers/billing-provider'
-import axios from 'axios'
-import React, { useEffect, useState } from 'react'
-import { SubscriptionCard } from './SubscriptionCard'
-import { CreditTracker } from './CreditsTracker'
+import { useBilling } from "@/providers/billing-provider";
+import axios from "axios";
+import React, { useEffect, useState } from "react";
+import { SubscriptionCard } from "./SubscriptionCard";
+import { CreditTracker } from "./CreditsTracker";
 
-type Props = {}
+type Props = {};
 
 export const BillingDashboard = (props: Props) => {
-  const { credits, tier } = useBilling()
-  const [stripeProducts, setStripeProducts] = useState<any>([])
-  const [loading, setLoading] = useState<boolean>(false)
+  const { credits, tier } = useBilling();
+  const [stripeProducts, setStripeProducts] = useState<any>([]);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const onStripeProducts = async () => {
-    setLoading(true)
-    const { data } = await axios.get('/api/payment')
+    setLoading(true);
+    const { data } = await axios.get("/api/payment");
     if (data) {
-      setStripeProducts(data)
-      setLoading(false)
+      setStripeProducts(data);
+      setLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
-    onStripeProducts()
-  }, [])
+    onStripeProducts();
+  }, []);
 
   const onPayment = async (id: string) => {
     const { data } = await axios.post(
-      '/api/payment',
+      "/api/payment",
       {
         priceId: id,
       },
       {
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       }
-    )
-    window.location.assign(data)
-  }
+    );
+    window.location.assign(data);
+  };
 
   return (
     <>
-      {/* {loading ? (
+      {loading ? (
         <div className="absolute flex h-full w-full items-center justify-center">
           <svg
             aria-hidden="true"
@@ -62,7 +62,7 @@ export const BillingDashboard = (props: Props) => {
             />
           </svg>
         </div>
-      ) : ( */}
+      ) : (
         <>
           <div className="flex gap-5 p-6">
             <SubscriptionCard
@@ -71,12 +71,9 @@ export const BillingDashboard = (props: Props) => {
               products={stripeProducts}
             />
           </div>
-          <CreditTracker
-            tier={tier}
-            credits={parseInt(credits)}
-          />
+          <CreditTracker tier={tier} credits={parseInt(credits)} />
         </>
-      {/* )} */}
+      )}
     </>
-  )
-}
+  );
+};
