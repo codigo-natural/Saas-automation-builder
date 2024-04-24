@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect } from "react";
 import { ModeToggle } from "../global/mode-toggle";
 import { Book, Headphones, Search } from "lucide-react";

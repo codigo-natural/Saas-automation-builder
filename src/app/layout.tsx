@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
+import { BillingProvider } from "@/providers/billing-provider";
 
 const font = DM_Sans({ subsets: ["latin"] });
 
@@ -30,10 +31,12 @@ export default function RootLayout({
             enableSystem
             disableTransitionOnChange
           >
-            <ModalProvider>
-              {children}
-              <Toaster />
-            </ModalProvider>
+            <BillingProvider>
+              <ModalProvider>
+                {children}
+                <Toaster />
+              </ModalProvider>
+            </BillingProvider>
           </ThemeProvider>
         </body>
       </html>
