@@ -14,10 +14,10 @@ import { Input } from "@/components/ui/input";
 import { onContentChange } from "@/lib/editor-utils";
 import { GoogleFileDetails } from "./GoogleFileDetails";
 import { GoogleDriveFiles } from "./GoogleDriveFiles";
-// import ActionButton from "./action-button";
-import { getFileMetaData } from "@/app/(main)/(pages)/connections/_actions/google-connection";
+// import { getFileMetaData } from "@/app/(main)/(pages)/connections/_actions/google-connection";
 import axios from "axios";
 import { toast } from "sonner";
+import { ActionButton } from "./ActionButton";
 
 export interface Option {
   value: string;
